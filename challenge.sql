@@ -36,9 +36,22 @@ LEFT JOIN loans ln
     ON br.borrower_id = ln.borrower_id
 ORDER BY br.borrower_id, ln.loan_id;
 
-
-
 -- 4. Return only loans with a credit score below 700.
+SELECT
+    ln.loan_id,
+    br.borrower_id,
+    br.borrower_name,
+    br.credit_score,
+    br.state,
+    ln.loan_amount,
+    ln.interest_rate,
+    ln.product_type,
+    ln.lock_status
+FROM loans ln
+JOIN borrowers br
+    ON ln.borrower_id = br.borrower_id
+WHERE br.credit_score < 700
+ORDER BY br.credit_score, ln.loan_id;
 
 -- 5. Calculate expected margin dollars by lock status.
 
