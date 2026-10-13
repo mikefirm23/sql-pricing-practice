@@ -22,6 +22,22 @@ LIMIT 1;
 
 -- 3. Show every borrower, including any borrower who has no loan.
 
+SELECT
+    br.borrower_id,
+    br.borrower_name,
+    br.credit_score,
+    br.state,
+    ln.loan_id,
+    ln.loan_amount,
+    ln.product_type,
+    ln.lock_status
+FROM borrowers br
+LEFT JOIN loans ln
+    ON br.borrower_id = ln.borrower_id
+ORDER BY br.borrower_id, ln.loan_id;
+
+
+
 -- 4. Return only loans with a credit score below 700.
 
 -- 5. Calculate expected margin dollars by lock status.

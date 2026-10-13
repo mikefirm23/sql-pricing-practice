@@ -4,7 +4,9 @@ INSERT INTO borrowers VALUES
 (2, 'Jordan Lee', 698, 'SC'),
 (3, 'Morgan Smith', 781, 'NC'),
 (4, 'Taylor Brown', 655, 'GA'),
-(5, 'Casey Davis', 720, 'VA');
+(5, 'Casey Davis', 720, 'VA'),
+(6, 'Riley Wilson', 705, 'TN');
+
 
 INSERT INTO loans VALUES
 (101, 1, 325000.00, 6.375, 'Locked', '30Y Fixed', 115),
