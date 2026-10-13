@@ -1,9 +1,22 @@
--- challenge.sql
--- Write each solution below its question, test it, and commit your changes.
-
 -- 1. What is the total loan volume by state?
+SELECT
+    b.state,
+    COUNT(*) AS loan_count,
+    ROUND(SUM(1.loan_amount), 2) AS total_loan_volume
+FROM borrowers b
+JOIN loans 1
+    ON b.borrower_id = 1.borrower_id
+GROUP BY b.state
+ORDER BY total_loan_volume DESC;
 
 -- 2. Which product type has the highest average expected margin in basis points?
+SELECT
+    product_type,
+    ROUND(AVG(expected_margin_bps), 2) AS avg_margin_bps
+FROM loans
+GROUP BY product_type
+ORDER BY avg_margin_bps DESC
+LIMIT 1;
 
 -- 3. Show every borrower, including any borrower who has no loan.
 
