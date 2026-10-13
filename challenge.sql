@@ -1,13 +1,15 @@
 -- 1. What is the total loan volume by state?
+
 SELECT
     b.state,
     COUNT(*) AS loan_count,
-    ROUND(SUM(1.loan_amount), 2) AS total_loan_volume
+    ROUND(SUM(l.loan_amount), 2) AS total_loan_volume
 FROM borrowers b
-JOIN loans 1
-    ON b.borrower_id = 1.borrower_id
+JOIN loans l
+    ON b.borrower_id = l.borrower_id
 GROUP BY b.state
 ORDER BY total_loan_volume DESC;
+
 
 -- 2. Which product type has the highest average expected margin in basis points?
 SELECT
