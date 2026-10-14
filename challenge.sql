@@ -92,3 +92,61 @@ FROM ranked_loans
 ORDER BY loan_rank;
 
 -- 7. Bonus: Use a window function to calculate each loan's percentage of total pipeline volume.
+WITH raw_pipeline_share AS (
+    SELECT
+        loan_id,
+        borrower_id,
+        loan_amount,
+        SUM(loan_amount) OVER () AS total_pipeline_volume,
+        loan_amount * 100.0
+            / SUM(loan_amount) OVER () AS raw_pipeline_share_pct
+    FROM loans
+),
+rounded_down AS (
+    SELECT
+        loan_id,
+        borrower_id,
+        loan_amount,
+        total_pipeline_volume,
+        raw_pipeline_share_pct,
+        CAST(raw_pipeline_share_pct * 100 AS INTEGER)
+            AS base_hundredths,
+        raw_pipeline_share_pct * 100
+            - CAST(raw_pipeline_share_pct * 100 AS INTEGER)
+            AS fractional_remainder
+    FROM raw_pipeline_share
+),
+ranked_remainders AS (
+    SELECT
+        loan_id,
+        borrower_id,
+        loan_amount,
+        total_pipeline_volume,
+        base_hundredths,
+        ROW_NUMBER() OVER (
+            ORDER BY fractional_remainder DESC, loan_id
+        ) AS remainder_rank,
+        10000 - SUM(base_hundredths) OVER ()
+            AS hundredths_to_allocate
+    FROM rounded_down
+)
+SELECT
+    loan_id,
+    borrower_id,
+    loan_amount,
+    ROUND(total_pipeline_volume, 2)
+        AS total_pipeline_volume,
+    ROUND(
+        (
+            base_hundredths
+            + CASE
+                WHEN remainder_rank <= hundredths_to_allocate
+                    THEN 1
+                ELSE 0
+            END
+        ) / 100.0,
+        2
+    ) AS pipeline_share_pct
+FROM ranked_remainders
+ORDER BY pipeline_share_pct DESC, loan_id;
+
