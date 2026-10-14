@@ -54,6 +54,17 @@ WHERE br.credit_score < 700
 ORDER BY br.credit_score, ln.loan_id;
 
 -- 5. Calculate expected margin dollars by lock status.
+SELECT
+    lock_status,
+    COUNT(*) AS loan_count,
+    ROUND(SUM(loan_amount), 2) AS total_loan_volume,
+    ROUND(
+        SUM(loan_amount * expected_margin_bps / 10000.0),
+        2
+    ) AS expected_margin_dollars
+FROM loans
+GROUP BY lock_status
+ORDER BY expected_margin_dollars DESC;
 
 -- 6. Create a CTE that ranks loans from largest to smallest.
 
