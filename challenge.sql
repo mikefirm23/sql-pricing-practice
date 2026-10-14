@@ -67,5 +67,28 @@ GROUP BY lock_status
 ORDER BY expected_margin_dollars DESC;
 
 -- 6. Create a CTE that ranks loans from largest to smallest.
+WITH ranked_loans AS (
+    SELECT
+        loan_id,
+        borrower_id,
+        loan_amount,
+        interest_rate,
+        product_type,
+        lock_status,
+        ROW_NUMBER() OVER (
+            ORDER BY loan_amount DESC, loan_id
+        ) AS loan_rank
+    FROM loans
+)
+SELECT
+    loan_rank,
+    loan_id,
+    borrower_id,
+    loan_amount,
+    interest_rate,
+    product_type,
+    lock_status
+FROM ranked_loans
+ORDER BY loan_rank;
 
 -- 7. Bonus: Use a window function to calculate each loan's percentage of total pipeline volume.
